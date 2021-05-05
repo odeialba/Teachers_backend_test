@@ -7,7 +7,14 @@
             <h1>Courses</h1>
             <div class="row">
                 <div class="col-sm-12">
-                    Form to add new course
+                    <form action="{{ route('courses') }}" method="post" enctype="multipart/form-data">
+                    @csrf <!-- {{ csrf_field() }} -->
+                        <div class="form-group">
+                            <label class="h5" for="data">Course name:</label>
+                            <input id="course" type="text" name="course" class="w-100 form-control" placeholder="New course name">
+                        </div>
+                        <button type="submit" name="add" class="btn btn-primary">Teach</button>
+                    </form>
                 </div>
             </div>
             <div class="row">

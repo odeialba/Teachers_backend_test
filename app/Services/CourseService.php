@@ -1,6 +1,7 @@
 <?php namespace App\Services;
 
 use App\Models\Course;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
 class CourseService
@@ -79,5 +80,52 @@ class CourseService
         }
 
         return $allCourses;
+    }
+
+    public function getCourseByName(string $name): ?Course
+    {
+        $course = Course::query()->where('name', '=', $name)->first();
+
+        return $this->buildCourseObject($course);
+    }
+
+    /*public function getCourseById(int $id): ?Course
+    {
+        $course = Course::query()->where('id', '=', $id)->first();
+
+        return $this->buildCourseObject($course);
+    }*/
+
+    public function addTeacherToNewCourse(int $teacherId, string $courseName): bool
+    {
+        $course = $this->getCourseByName($courseName);
+
+        if (! $course) {
+            $courseId = $this->insertCourseByName($courseName);
+        } else {
+            $courseId = $course->getId();
+        }
+
+        return $this->addTeacherToCourse($teacherId, $courseId);
+    }
+
+    public function insertCourseByName(string $courseName): int
+    {
+        return DB::table('courses')->insertGetId(['name' => $courseName]);
+    }
+
+    public function addTeacherToCourse(int $teacherId, int $courseId): bool
+    {
+        return (bool) DB::table('course_teachers')->insertOrIgnore([
+            [
+                'course_id' => $courseId,
+                'teacher_id' => $teacherId
+            ],
+        ]);
+    }
+
+    public function buildCourseObject(?Model $course): ?Course
+    {
+        return $course ? (new Course())->fromArray($course->toArray()) : null;
     }
 }

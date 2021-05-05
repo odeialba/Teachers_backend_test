@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Services\CourseService;
 use Illuminate\Contracts\Support\Renderable;
+use Illuminate\Http\Request;
 
 class CourseController extends Controller
 {
@@ -26,17 +27,19 @@ class CourseController extends Controller
         return view('courses.index', $params);
     }
 
-    public function add(CourseService $courseService): Renderable
+    public function add(Request $request, CourseService $courseService): Renderable
     {
-        $courses = $courseService->getAllCourses();
+        if ($request->isMethod('POST')) {
+            $teacherId = auth()->user()->__get('id');
+            $courseName = (string) $request->get('course');
+
+            $courseService->addTeacherToNewCourse($teacherId, $courseName);
+        }
 
         $params = [
-            'courses' => $courses,
+            'courses' => $courseService->getAllCourses(),
         ];
 
         return view('courses.add', $params);
-        // I will add an input to insert the name for a new course and a button to join as teacher
-        // (if there is no course, it doesn't make sense to join as student)
-        // Then I will add a list of existing courses and two buttons. One to join as student and one to join as teacher.
     }
 }
