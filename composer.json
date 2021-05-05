@@ -49,8 +49,8 @@
             "@clear",
             "@restart"
         ],
-        "restart": "/etc/init.d/php*-fpm restart && /etc/init.d/nginx restart",
         "migrate": "php artisan migrate",
+        "test": "php artisan test",
         "create-migration": "php artisan make:migration",
         "npm-run": "npm run dev"
     },
