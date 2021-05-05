@@ -18,10 +18,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/votes', [VoteController::class, 'index'])->name('votes');
 Route::get('/vote/{type}/{id}', [VoteController::class, 'add'])->name('addVote');
-Route::get('/my-courses', [CourseController::class, 'index'])->name('myCourses');
+Route::get('/', [CourseController::class, 'index'])->name('myCourses');
 Route::get('/courses', [CourseController::class, 'add'])->name('courses');
 Route::post('/courses', [CourseController::class, 'add'])->name('courses');
+Route::get('/join-course/{type}/{id}', [CourseController::class, 'join'])->name('joinCourse');
 
 Auth::routes();
-
-Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

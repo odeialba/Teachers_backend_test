@@ -95,12 +95,12 @@ class User extends Authenticatable
         return $this;
     }
 
-    public function fromArray(array $attributes): self
+    public function fromObject(object $attributes): self
     {
-        $this->setId($attributes['id']);
-        $this->setName($attributes['name']);
-        $this->setEmail($attributes['email']);
-        $this->setType($attributes['type']);
+        $this->setId($attributes->id);
+        $this->setName($attributes->name);
+        $this->setEmail($attributes->email);
+        $this->setType($attributes->type);
 
         return $this;
     }

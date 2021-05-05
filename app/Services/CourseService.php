@@ -25,8 +25,8 @@ class CourseService
         $courses = Course::query()->orderBy('name')->get('*');
         $allCourses = [];
 
-        foreach ($courses->toArray() as $courseArray) {
-            $course = (new Course())->fromArray($courseArray);
+        foreach ($courses->toArray() as $courseObj) {
+            $course = (new Course())->fromArray($courseObj);
             $course->setVotes($this->voteService->getCourseVotes($course->getId()));
             $allCourses[] = $course;
         }
@@ -47,8 +47,13 @@ class CourseService
             ->get('courses.*');
         $allCourses = [];
 
-        foreach ($courses->toArray() as $courseArray) {
-            $course = (new Course())->fromArray($courseArray);
+        foreach ($courses->toArray() as $courseObj) {
+            $course = $this->buildCourseObject($courseObj);
+
+            if (! $course) {
+                continue;
+            }
+
             $course->setTeachers($this->teacherService->getTeachersByCourseId($course->getId()));
             $course->setStudents($this->studentService->getStudentsByCourseId($course->getId()));
 
@@ -71,8 +76,13 @@ class CourseService
             ->get('courses.*');
         $allCourses = [];
 
-        foreach ($courses->toArray() as $courseArray) {
-            $course = (new Course())->fromArray($courseArray);
+        foreach ($courses->toArray() as $courseobj) {
+            $course = $this->buildCourseObject($courseobj);
+
+            if (! $course) {
+                continue;
+            }
+
             $course->setTeachers($this->teacherService->getTeachersByCourseId($course->getId()));
             $course->setStudents($this->studentService->getStudentsByCourseId($course->getId()));
 
@@ -82,11 +92,40 @@ class CourseService
         return $allCourses;
     }
 
+    public function getCoursesIdsByStudentId(int $studentId): array
+    {
+        $courses = $this->getAllCoursesByStudentId($studentId);
+
+        return $this->getCoursesIdsFromCourses($courses);
+    }
+
+    public function getCoursesIdsByTeacherId(int $teacherId): array
+    {
+        $courses = $this->getAllCoursesByTeacherId($teacherId);
+
+        return $this->getCoursesIdsFromCourses($courses);
+    }
+
+    /**
+     * @param Course[] $courses
+     * @return int[]
+     */
+    private function getCoursesIdsFromCourses(array $courses): array
+    {
+        $courseIds = [];
+
+        foreach ($courses as $course) {
+            $courseIds[] = $course->getId();
+        }
+
+        return $courseIds;
+    }
+
     public function getCourseByName(string $name): ?Course
     {
         $course = Course::query()->where('name', '=', $name)->first();
 
-        return $this->buildCourseObject($course);
+        return $course ? $this->buildCourseObject((object) $course->toArray()) : null;
     }
 
     /*public function getCourseById(int $id): ?Course
@@ -124,8 +163,18 @@ class CourseService
         ]);
     }
 
-    public function buildCourseObject(?Model $course): ?Course
+    public function addStudentToCourse(int $studentId, int $courseId): bool
     {
-        return $course ? (new Course())->fromArray($course->toArray()) : null;
+        return (bool) DB::table('course_registrations')->insertOrIgnore([
+            [
+                'course_id' => $courseId,
+                'student_id' => $studentId
+            ],
+        ]);
+    }
+
+    public function buildCourseObject(?object $course): ?Course
+    {
+        return $course ? (new Course())->fromObject($course) : null;
     }
 }

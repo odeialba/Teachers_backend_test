@@ -38,11 +38,12 @@ class VoteController extends Controller
     {
         $id = (int) $request->route('id');
         $type = (string) $request->route('type');
+        $userId = (int) auth()->user()->__get('id');
 
         if ($type === 'teacher') {
-            $voteService->addVoteToTeacher(auth()->user()->__get('id'), $id);
+            $voteService->addVoteToTeacher($userId, $id);
         } elseif ($type === 'course') {
-            $voteService->addVoteToCourse(auth()->user()->__get('id'), $id);
+            $voteService->addVoteToCourse($userId, $id);
         }
 
         return redirect()->route('votes');

@@ -22,7 +22,7 @@ class TeacherService
         $teachers = [];
 
         foreach ($users->toArray() as $user) {
-            $teacher = (new Teacher())->fromArray($user);
+            $teacher = (new Teacher())->fromObject((object) $user);
             $teacher->setVotes($this->voteService->getTeacherVotes($teacher->getId()));
             $teachers[] = $teacher;
         }
@@ -44,7 +44,7 @@ class TeacherService
         $teachers = [];
 
         foreach ($users->toArray() as $user) {
-            $teachers[] = (new Teacher())->fromArray($user);
+            $teachers[] = (new Teacher())->fromObject((object) $user);
         }
 
         return $teachers;

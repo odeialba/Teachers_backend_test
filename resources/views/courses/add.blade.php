@@ -17,12 +17,13 @@
                     </form>
                 </div>
             </div>
+            <br>
             <div class="row">
                 <div class="col-sm-12">
                     <table class="table-hover table w-100">
                         <thead>
                         <tr class="bg-grey">
-                            <th>Id</th><th>Name</th><th></th>
+                            <th>Id</th><th>Name</th><th></th><th></th>
                         </tr>
                         </thead>
                         @foreach ($courses as $course)
@@ -30,7 +31,16 @@
                             <tr>
                                 <td>{{ $course->getId() }}</td>
                                 <td>{{ $course->getName() }}</td>
-                                <td>Join as Teacher | Join as Student</td>
+                                <td>
+                                    <a href="{{ route('joinCourse', ['study', $course->getId()]) }}" class='btn btn-primary w-100 {{ in_array($course->getId(), $studyingCourseIds) ? 'disabled' : '' }}'>
+                                        Study{{ in_array($course->getId(), $studyingCourseIds) ? 'ing' : '' }}
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href="{{ route('joinCourse', ['teach', $course->getId()]) }}" class='btn btn-primary w-100 {{ in_array($course->getId(), $teachingCourseIds) ? 'disabled' : '' }}'>
+                                        Teach{{ in_array($course->getId(), $teachingCourseIds) ? 'ing' : '' }}
+                                    </a>
+                                </td>
                             </tr>
                         @endforeach
                     </table>

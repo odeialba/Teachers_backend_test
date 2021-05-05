@@ -23,7 +23,7 @@ class StudentService
         $students = [];
 
         foreach ($users->toArray() as $user) {
-            $students[] = (new User())->fromArray($user);
+            $students[] = (new User())->fromObject((object) $user);
         }
 
         return $students;

@@ -11,20 +11,16 @@
                     <table class="table-hover table w-100">
                         <thead>
                         <tr class="bg-grey">
-                            <th colspan="2">Name</th>
+                            <th>Name</th>
+                            <th>Teachers</th>
+                            <th>Students</th>
                         </tr>
                         </thead>
                         <tbody>
                         @foreach ($teachingCourses as $course)
                             <?php /** @var \App\Models\Course $course */ ?>
                             <tr>
-                                <td colspan="2">{{ $course->getName() }}</td>
-                            </tr>
-                            <tr>
-                                <th>Teachers</th>
-                                <th>Students</th>
-                            </tr>
-                            <tr>
+                                <td>{{ $course->getName() }}</td>
                                 <td>
                                     <ul>
                                         @foreach ($course->getTeachers() as $teacher)
@@ -51,20 +47,16 @@
                     <table class="table-hover table w-100">
                         <thead>
                         <tr class="bg-grey">
-                            <th colspan="2">Name</th>
+                            <th>Name</th>
+                            <th>Teachers</th>
+                            <th>Students</th>
                         </tr>
                         </thead>
                         <tbody>
                         @foreach ($studyingCourses as $course)
                             <?php /** @var \App\Models\Course $course */ ?>
                             <tr>
-                                <td colspan="2">{{ $course->getName() }}</td>
-                            </tr>
-                            <tr>
-                                <th>Teachers</th>
-                                <th>Students</th>
-                            </tr>
-                            <tr>
+                                <td>{{ $course->getName() }}</td>
                                 <td>
                                     <ul>
                                         @foreach ($course->getTeachers() as $teacher)
