@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Repositories\CourseRepository;
 use App\Services\CourseService;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\RedirectResponse;
@@ -16,7 +17,7 @@ class CourseController extends Controller
 
     public function index(CourseService $courseService): Renderable
     {
-        $userId = auth()->user()->__get('id');
+        $userId = (int) auth()->user()->__get('id');
         $studyingCourses = $courseService->getAllCoursesByStudentId($userId);
         $teachingCourses = $courseService->getAllCoursesByTeacherId($userId);
 
@@ -30,7 +31,7 @@ class CourseController extends Controller
 
     public function add(Request $request, CourseService $courseService): Renderable
     {
-        $userId = auth()->user()->__get('id');
+        $userId = (int) auth()->user()->__get('id');
 
         if ($request->isMethod('POST')) {
             $courseName = (string) $request->get('course');
@@ -50,16 +51,16 @@ class CourseController extends Controller
         return view('courses.add', $params);
     }
 
-    public function join(Request $request, CourseService $courseService): RedirectResponse
+    public function join(Request $request, CourseRepository $courseRepository): RedirectResponse
     {
         $id = (int) $request->route('id');
         $type = (string) $request->route('type');
         $userId = (int) auth()->user()->__get('id');
 
         if ($type === 'teach') {
-            $courseService->addTeacherToCourse($userId, $id);
+            $courseRepository->addTeacherToCourse($userId, $id);
         } elseif ($type === 'study') {
-            $courseService->addStudentToCourse($userId, $id);
+            $courseRepository->addStudentToCourse($userId, $id);
         }
 
         return redirect()->route('courses');

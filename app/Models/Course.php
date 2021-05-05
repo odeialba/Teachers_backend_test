@@ -77,14 +77,6 @@ class Course extends Model
         return $this;
     }
 
-    public function fromArray(array $attributes): self
-    {
-        $this->setId($attributes['id']);
-        $this->setName($attributes['name']);
-
-        return $this;
-    }
-
     public function fromObject(object $attributes): self
     {
         $this->setId($attributes->id);

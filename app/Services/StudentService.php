@@ -1,12 +1,15 @@
 <?php namespace App\Services;
 
 use App\Models\User;
-use Illuminate\Support\Facades\DB;
+use App\Repositories\StudentRepository;
 
 class StudentService
 {
-    public function __construct()
+    private StudentRepository $studentRepository;
+
+    public function __construct(StudentRepository $studentRepository)
     {
+        $this->studentRepository = $studentRepository;
     }
 
     /**
@@ -14,15 +17,10 @@ class StudentService
      */
     public function getStudentsByCourseId(int $courseId): array
     {
-        $users = DB::table('users')
-            ->join('course_registrations', function ($join) use ($courseId) {
-                $join->on('users.id', '=', 'course_registrations.student_id')
-                    ->where('course_registrations.course_id', '=', $courseId);
-            })
-            ->get('users.*');
+        $users = $this->studentRepository->getStudentsByCourseId($courseId);
         $students = [];
 
-        foreach ($users->toArray() as $user) {
+        foreach ($users as $user) {
             $students[] = (new User())->fromObject((object) $user);
         }
 

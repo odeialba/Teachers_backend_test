@@ -1,16 +1,18 @@
 <?php namespace App\Services;
 
 use App\Models\Teacher;
-use App\Models\User;
-use Illuminate\Support\Facades\DB;
+use App\Repositories\TeacherRepository;
+use App\Repositories\VoteRepository;
 
 class TeacherService
 {
-    private VoteService $voteService;
+    private VoteRepository $voteRepository;
+    private TeacherRepository $teacherRepository;
 
-    public function __construct(VoteService $voteService)
+    public function __construct(VoteRepository $voteRepository, TeacherRepository $teacherRepository)
     {
-        $this->voteService = $voteService;
+        $this->voteRepository = $voteRepository;
+        $this->teacherRepository = $teacherRepository;
     }
 
     /**
@@ -18,12 +20,12 @@ class TeacherService
      */
     public function getAllTeachers(): array
     {
-        $users = User::query()->where('type', '=', 'TEACHER')->orderBy('name')->get('*');
+        $users = $this->teacherRepository->getAllTeachers();
         $teachers = [];
 
-        foreach ($users->toArray() as $user) {
+        foreach ($users as $user) {
             $teacher = (new Teacher())->fromObject((object) $user);
-            $teacher->setVotes($this->voteService->getTeacherVotes($teacher->getId()));
+            $teacher->setVotes($this->voteRepository->getTeacherVotes($teacher->getId()));
             $teachers[] = $teacher;
         }
 
@@ -35,15 +37,10 @@ class TeacherService
      */
     public function getTeachersByCourseId(int $courseId): array
     {
-        $users = DB::table('users')
-            ->join('course_teachers', function ($join) use ($courseId) {
-                $join->on('users.id', '=', 'course_teachers.teacher_id')
-                    ->where('course_teachers.course_id', '=', $courseId);
-            })
-            ->get('users.*');
+        $users = $this->teacherRepository->getTeachersByCourseId($courseId);
         $teachers = [];
 
-        foreach ($users->toArray() as $user) {
+        foreach ($users as $user) {
             $teachers[] = (new Teacher())->fromObject((object) $user);
         }
 

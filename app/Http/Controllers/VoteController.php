@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Services\CourseService;
 use App\Services\TeacherService;
-use App\Services\VoteService;
+use App\Repositories\VoteRepository;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -16,13 +16,14 @@ class VoteController extends Controller
         $this->middleware('auth');
     }
 
-    public function index(CourseService $courseService, TeacherService $teacherService, VoteService $voteService): Renderable
+    public function index(CourseService $courseService, TeacherService $teacherService, VoteRepository $voteRepository): Renderable
     {
+        $userId = (int) auth()->user()->__get('id');
         $courses = $courseService->getAllCourses();
         $teachers = $teacherService->getAllTeachers();
 
-        $votedTeachers = $voteService->getTeacherVotesByUserId(auth()->user()->__get('id'));
-        $votedCourses = $voteService->getCourseVotesByUserId(auth()->user()->__get('id'));
+        $votedTeachers = $voteRepository->getTeacherVotesByUserId($userId);
+        $votedCourses = $voteRepository->getCourseVotesByUserId($userId);
 
         $params = [
             'courses' => $courses,
@@ -34,16 +35,16 @@ class VoteController extends Controller
         return view('votes.index', $params);
     }
 
-    public function add(Request $request, VoteService $voteService): RedirectResponse
+    public function add(Request $request, VoteRepository $voteRepository): RedirectResponse
     {
         $id = (int) $request->route('id');
         $type = (string) $request->route('type');
         $userId = (int) auth()->user()->__get('id');
 
         if ($type === 'teacher') {
-            $voteService->addVoteToTeacher($userId, $id);
+            $voteRepository->addVoteToTeacher($userId, $id);
         } elseif ($type === 'course') {
-            $voteService->addVoteToCourse($userId, $id);
+            $voteRepository->addVoteToCourse($userId, $id);
         }
 
         return redirect()->route('votes');

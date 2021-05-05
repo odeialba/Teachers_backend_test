@@ -1,8 +1,8 @@
-<?php namespace App\Services;
+<?php namespace App\Repositories;
 
 use Illuminate\Support\Facades\DB;
 
-class VoteService
+class VoteRepository
 {
     public function __construct()
     {
@@ -42,17 +42,19 @@ class VoteService
 
     public function addVoteToCourse(int $userId, int $courseId): void
     {
-        DB::table('course_votes')->insertOrIgnore([
-            'course_id' => $courseId,
-            'user_id' => $userId
-        ]);
+        DB::table('course_votes')
+            ->insertOrIgnore([
+                'course_id' => $courseId,
+                'user_id' => $userId
+            ]);
     }
 
     public function addVoteToTeacher(int $userId, int $teacherId): void
     {
-        DB::table('teacher_votes')->insertOrIgnore([
-            'teacher_id' => $teacherId,
-            'user_id' => $userId
-        ]);
+        DB::table('teacher_votes')
+            ->insertOrIgnore([
+                'teacher_id' => $teacherId,
+                'user_id' => $userId
+            ]);
     }
 }
