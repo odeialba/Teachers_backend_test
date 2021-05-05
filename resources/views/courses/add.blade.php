@@ -23,14 +23,14 @@
                     <table class="table-hover table w-100">
                         <thead>
                         <tr class="bg-grey">
-                            <th>Id</th><th>Name</th><th></th><th></th>
+                            <th>Name</th><th>Votes</th><th></th><th></th>
                         </tr>
                         </thead>
                         @foreach ($courses as $course)
                             <?php /** @var \App\Models\Course $course */ ?>
                             <tr>
-                                <td>{{ $course->getId() }}</td>
                                 <td>{{ $course->getName() }}</td>
+                                <td>{{ $course->getVotes() }}</td>
                                 <td>
                                     <a href="{{ route('joinCourse', ['study', $course->getId()]) }}" class='btn btn-primary w-100 {{ in_array($course->getId(), $studyingCourseIds) ? 'disabled' : '' }}'>
                                         Study{{ in_array($course->getId(), $studyingCourseIds) ? 'ing' : '' }}
